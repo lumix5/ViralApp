@@ -1,16 +1,30 @@
 import React from 'react';
-import {Text, View} from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 import {ExchangeProps} from "../Interfaces/ExchangeProps";
 import {defaultColors} from "../colors/AppPallete";
 
 
 const CurrencyExchange = ({currency}: ExchangeProps) => {
     return (
-        <View style={{display: 'flex', flexDirection: "row", width: 65, justifyContent: 'space-between'}}>
-            <Text style={{color: defaultColors.primary.text}}>-</Text>
-            <Text style={{color: defaultColors.primary.text}}>{currency} 💎</Text>
+        <View style={styles.exchangeContainer}>
+            <Text style={styles.exchangeTextColor}>-</Text>
+            <Text style={styles.exchangeTextColor}>{currency} 💎</Text>
         </View>
     );
 };
 
+const styles = StyleSheet.create({
+    exchangeTextColor: {
+        color: defaultColors.primary.text,
+    },
+    exchangeContainer: {
+        display: 'flex',
+        flexDirection: "row",
+        width: 65,
+        justifyContent: 'space-between',
+    },
+})
+
+
 export default CurrencyExchange;
+

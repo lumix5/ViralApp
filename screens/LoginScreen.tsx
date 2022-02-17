@@ -4,48 +4,31 @@ import ColoredBackgroundView from "../UI/ColoredBackgroundView";
 import {Button, Card, Input, Modal} from "@ui-kitten/components";
 import {human} from "react-native-typography";
 import {AnimatePresence, MotiView} from 'moti'
+import ModalLoginScreen from "../components/ModalLoginScreen";
+import {atSignIcon} from "../mockData";
 
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
     const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-
-
-    const isAuth = true
-
+    const [isFirstLaunch, setIsFirstLaunch] = useState(true)
+    
     return (
-        <View style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            <ColoredBackgroundView style={{
-                minHeight: 215,
-                height: '20%',
-                width: '90%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between'
-            }}>
-                <View style={{paddingBottom: 15}}>
-                    <Text style={[{textAlign: 'center'}, human.largeTitleWhite]}>Welcome!</Text>
-                    <Text style={[{textAlign: 'center'}, human.calloutWhite]}>Username to continue</Text>
+        <View style={styles.parentContainer}>
+            <ColoredBackgroundView style={styles.coloredContainer}>
+                <View style={styles.welcomePadding}>
+                    <Text style={[styles.textAlignCenter, human.largeTitleWhite]}>Welcome!</Text>
+                    <Text style={[styles.textAlignCenter, human.calloutWhite]}>Username to continue</Text>
                 </View>
                 <Input
                     placeholder="Username"
-                    textStyle={[{marginLeft: 40, position: 'absolute'}, human.body]}
+                    textStyle={[styles.inputTextStyle, human.body]}
                     accessoryLeft={<Image
-                        source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/At_sign.svg/2048px-At_sign.svg.png'}}/>}
+                        source={{uri: atSignIcon}}/>}
                 />
-                {/* <Input
-            style={{ fontSize: 50 }}
-            _light={{
-              bg: "coolGray.100"
-            }} _dark={{
-              bg: "coolGray.800"
-            }} w={{
-              base: "100%",
-              md: "100%"
-            }} InputLeftElement={<Text style={[{ fontSize: 5, color: 'black', marginLeft: 5, marginBottom: 5 }, human.largeTitle]}>@</Text>} placeholder="Login" /> */}
                 <View>
                 </View>
                 <View>
-                    <Button onClick={console.log(5)} status='control' onPress={() => navigation.navigate('About')}>
+                    <Button status='control' onPress={() => navigation.navigate(isFirstLaunch ? 'About' : 'App')}>
                         <Text style={human.body}>Continue</Text>
                     </Button>
                 </View>
@@ -56,31 +39,37 @@ const LoginScreen = ({navigation}) => {
                 Cannot find your username?
             </Button>
             <AnimatePresence exitBeforeEnter>
-                <Modal
-                    visible={isTooltipVisible}
-                    backdropStyle={styles.backdrop}
-                    onBackdropPress={() => setIsTooltipVisible(false)}>
-
-                    <MotiView exit={{scale: 0.8}} from={{scale: 0.9}} animate={{scale: 1}} transition={{
-                        type: 'timing',
-                        duration: 100,
-                    }}>
-                        <Card disabled={true}>
-                            <Image style={{height: 230, width: 340, marginVertical: 5}}
-                                   source={require('../assets/new.png')}/>
-                            <Button onPress={() => setIsTooltipVisible(false)}>
-                                Close
-                            </Button>
-                        </Card>
-                    </MotiView>
-
-                </Modal>
+                <ModalLoginScreen setIsTooltipVisible={setIsTooltipVisible} isTooltipVisible={isTooltipVisible}/>
             </AnimatePresence>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    welcomePadding: {
+        paddingBottom: 15,
+    },
+    textAlignCenter: {
+        textAlign: 'center',
+    },
+    inputTextStyle: {
+        marginLeft: 40,
+        position: 'absolute',
+    },
+    parentContainer: {
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    coloredContainer: {
+        minHeight: 215,
+        height: '20%',
+        width: '90%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+    },
     container: {
         minHeight: 192,
     },
@@ -90,3 +79,4 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+

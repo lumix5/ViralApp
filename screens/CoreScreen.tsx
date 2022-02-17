@@ -1,44 +1,41 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Text} from 'react-native'
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import SliderTab from "../Tabs/SliderTab";
-import PurchaseTab from "../Tabs/PurchaseTab";
-import ProfileTab from "../Tabs/ProfileTab";
-import PromoteVideoTab from "../Tabs/PromoteVideoTab";
+import {tabScreensArray} from '../tabScreensMock/tabScreenRoutes';
+import storeDataOnViewCoreScreen from "../localStorage/services/StoreDataOnViewCoreScreen";
 
 const Tab = createBottomTabNavigator();
 
+type TabScreensProps = {
+    name: string,
+    component: React.ReactNode,
+    icon: string
+}
+
 const CoreScreen = () => {
 
-    const [selectedIndex, setSelectedIndex] = React.useState(0);
+    useEffect(() => {
+        storeDataOnViewCoreScreen()
+    })
 
     return (
         <Tab.Navigator screenOptions={{header: () => null}}>
-            <Tab.Screen name="Slider" component={SliderTab} options={{
-                tabBarLabel: () => {
-                    return null
-                },
-                tabBarIcon: () => (<Text style={{color: 'red'}}>🎚️</Text>)
-            }}/>
-            <Tab.Screen name="Promote" component={PromoteVideoTab} options={{
-                tabBarLabel: () => {
-                    return null
-                },
-                tabBarIcon: () => (<Text style={{color: 'red'}}>🎥</Text>)
-            }}/>
-            <Tab.Screen name="VideoShare" component={ProfileTab} options={{
-                tabBarLabel: () => {
-                    return null
-                },
-                tabBarIcon: () => (<Text style={{color: 'red'}}>👤</Text>)
-            }}/>
-            <Tab.Screen name="Purchase" component={PurchaseTab} options={{
-                tabBarLabel: () => {
-                    return null
-                },
-                tabBarIcon: () => (<Text style={{color: 'red'}}>💳</Text>)
-            }}/>
-
+            {
+                tabScreensArray.map(({name, component, icon}: TabScreensProps): React.ReactNode => {
+                    return (
+                        <Tab.Screen
+                            name={name}
+                            component={component}
+                            options={{
+                                tabBarLabel: () => {
+                                    return null;
+                                },
+                                tabBarIcon: () => <Text>{icon}</Text>,
+                            }}
+                        />
+                    )
+                })
+            }
         </Tab.Navigator>
     );
 };

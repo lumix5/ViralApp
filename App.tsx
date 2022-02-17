@@ -1,73 +1,55 @@
 import {StyleSheet} from 'react-native'
-import {SafeAreaProvider} from 'react-native-safe-area-context'
 import React, {useState} from 'react'
-import {NavigationContainer} from '@react-navigation/native'
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
-import LoginScreen from './screens/LoginScreen'
-import AboutScreen from './screens/AboutScreen'
-import CoreScreen from './screens/CoreScreen'
-import {NativeBaseProvider} from 'native-base'
-import {ApplicationProvider} from "@ui-kitten/components";
-import * as eva from '@eva-design/eva';
-import {default as theme} from './assets/custom-theme.json'
+import {defaultRoutes, firstTimeRoutes, Route, userLoggedInRoutes} from './stackScreenRoutes/screenRoutes';
+import Providers from './hoc/Providers'
+import {getData} from "./localStorage/getData";
+import {storeData} from "./localStorage/storeData";
 
 const Stack = createNativeStackNavigator()
 
 export default function App() {
-    const [appIsReady, setAppIsReady] = useState(false)
-    const [isAuth, setIsAuth] = useState(false)
-    const [IsFirstLaunch, setIsFirstLaunch] = useState(true)
+    const [appIsReady, setAppIsReady] = useState(true)
+    const [isAuthorized, setIsAuthorized] = useState(false)
+    const [isFirstLaunch, setIsFirstLaunch] = useState(true)
+    
+    //TODO: Decompose
+    getData('isAuth').then((result) => {
+        if (result === null) {
+            storeData('isAuth', {isAuth: false})
+        }
+        setIsAuthorized(result?.isAuth)
+    })
 
-    // useEffect(() => {
-    //     async function prepare() {
-    //         try {
-    //             await SplashScreen.preventAutoHideAsync();
-    //             await setTimeout(() => {
-
-    //             }, 1)
-    //             await new Promise(resolve => setTimeout(resolve, 2000));
-    //         } catch (e) {
-    //             console.warn(e);
-    //         } finally {
-    //             setAppIsReady(true);
-    //         }
-    //     }
-
-    //     prepare();
-    // }, []);
-
-    // const onLayoutRootView = useCallback(async () => {
-    //     if (appIsReady) {
-    //         await SplashScreen.hideAsync();
-    //     }
-    // }, [appIsReady]);
-
-    // if (!appIsReady) {
-    //     return <View style={{backgroundColor: 'wheat', height: '100%', width: '100%'}}>
-    //         <View
-    //             style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
-    //             onLayout={onLayoutRootView}>
-    //             <Text>SplashScreen Demo! 👋</Text>
-    //         </View>
-    //     </View>;
-    // }
-
+    getData('isFirstTime').then((result) => {
+        if (result === null) {
+            storeData('isFirstTime', {isFirstTime: true})
+        }
+        setIsFirstLaunch(result?.isFirstTime)
+    })
+    
     return (
-        <NavigationContainer>
-            <SafeAreaProvider style={styles.safeAreaProviderContainer}>
-                <ApplicationProvider {...eva} theme={{...eva.light, ...theme}}>
-                    <NativeBaseProvider>
-                        <Stack.Navigator screenOptions={{header: () => null}}>
-                            <Stack.Screen name="App" component={CoreScreen}/>
-                            <Stack.Screen name="Login" component={LoginScreen}/>
-                            <Stack.Screen name="About" component={AboutScreen}/>
-
-                        </Stack.Navigator>
-                    </NativeBaseProvider>
-                </ApplicationProvider>
-            </SafeAreaProvider>
-        </NavigationContainer>
-    )
+        <Providers>
+            <Stack.Navigator screenOptions={{header: () => null}}>
+                {
+                    isFirstLaunch
+                        ?
+                        firstTimeRoutes.map(({name, component}: Route) => {
+                            return <Stack.Screen name={name} component={component}/>
+                        })
+                        : isAuthorized
+                            ?
+                            userLoggedInRoutes.map(({name, component}: Route) => {
+                                return <Stack.Screen name={name} component={component}/>
+                            })
+                            :
+                            defaultRoutes.map(({name, component}: Route) => {
+                                return <Stack.Screen name={name} component={component}/>
+                            })
+                }
+            </Stack.Navigator>
+        </Providers>
+    );
 }
 
 const styles = StyleSheet.create({

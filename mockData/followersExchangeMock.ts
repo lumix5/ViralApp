@@ -1,8 +1,8 @@
 interface Iexchange {
-    [key: number]: { followers: number; currency: number; };
+     followers: number; currency: number; 
 }
 
-export const exchange: Iexchange = [
+export const exchange: Iexchange[] = [
     {
         followers: 5,
         currency: 10

@@ -22,7 +22,9 @@ const MyButton = ({onClick, accessoryLeft, accessoryRight, style, children, stat
             accessoryLeft={accessoryLeft}
             accessoryRight={accessoryRight}
             style={[styles.button, {...style}]}
-        >{children}</Button>
+        >
+            {children}
+        </Button>
     );
 }
 
